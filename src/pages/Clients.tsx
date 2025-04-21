@@ -16,22 +16,7 @@ import ClientFormModal from "@/components/clients/ClientFormModal";
 import EditClientModal from "@/components/clients/EditClientModal";
 import type { ClientFormValues } from "@/components/clients/ClientFormModal";
 import type { EditClientFormValues } from "@/components/clients/EditClientModal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useLocalClients } from "@/hooks/useLocalClients";
 import { useToast } from "@/hooks/use-toast";
 
 interface Client {
@@ -51,7 +36,7 @@ interface Client {
 }
 
 const Clients = () => {
-  const [clients, setClients] = useState<Client[]>([]);
+  const { clients, addClient, updateClient, deleteClient } = useLocalClients();
   const [searchTerm, setSearchTerm] = useState("");
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const { toast } = useToast();
@@ -63,8 +48,7 @@ const Clients = () => {
   );
 
   const handleNewClient = (data: ClientFormValues) => {
-    const newClient: Client = {
-      id: Date.now(),
+    const newClient = {
       firstName: data.firstName,
       lastName: data.lastName,
       age: Number(data.age),
@@ -75,11 +59,11 @@ const Clients = () => {
       server: data.server,
       email: "",
       plan: "",
-      status: "pending",
+      status: "pending" as const,
       expirationDate: "",
     };
 
-    setClients(prev => [...prev, newClient]);
+    addClient(newClient);
     toast({
       title: "Cliente cadastrado",
       description: "O novo cliente foi adicionado com sucesso!"
@@ -87,16 +71,10 @@ const Clients = () => {
   };
 
   const handleEditClient = (id: number, data: EditClientFormValues) => {
-    setClients(prev => prev.map(client => {
-      if (client.id === id) {
-        return {
-          ...client,
-          ...data,
-          age: Number(data.age),
-        };
-      }
-      return client;
-    }));
+    updateClient(id, {
+      ...data,
+      age: Number(data.age),
+    });
     
     toast({
       title: "Cliente atualizado",
@@ -119,7 +97,7 @@ const Clients = () => {
 
   const handleDeleteConfirm = () => {
     if (clientToDelete) {
-      setClients(prev => prev.filter(client => client.id !== clientToDelete.id));
+      deleteClient(clientToDelete.id);
       toast({
         title: "Cliente removido",
         description: "O cliente foi removido com sucesso!"
