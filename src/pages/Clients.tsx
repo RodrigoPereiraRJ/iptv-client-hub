@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, MoreHorizontal } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Trash2 } from "lucide-react";
 import ClientFormModal from "@/components/clients/ClientFormModal";
 import EditClientModal from "@/components/clients/EditClientModal";
 import type { ClientFormValues } from "@/components/clients/ClientFormModal";
@@ -108,6 +107,14 @@ const Clients = () => {
     }
   };
 
+  const handleDeleteClient = (id: number) => {
+    setClients(prev => prev.filter(client => client.id !== id));
+    toast({
+      title: "Cliente removido",
+      description: "O cliente foi removido com sucesso!"
+    });
+  };
+
   return (
     <Layout title="Gerenciar Clientes">
       <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -194,7 +201,13 @@ const Clients = () => {
                           <DropdownMenuItem className="cursor-pointer">Renovar</DropdownMenuItem>
                           <DropdownMenuItem className="cursor-pointer">Detalhes</DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-iptv-border" />
-                          <DropdownMenuItem className="cursor-pointer text-iptv-danger">Desativar</DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="cursor-pointer text-iptv-danger flex items-center gap-2"
+                            onClick={() => handleDeleteClient(client.id)}
+                          >
+                            <Trash2 size={16} />
+                            Excluir
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
