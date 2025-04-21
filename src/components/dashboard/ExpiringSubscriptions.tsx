@@ -5,46 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 
-// Dados de exemplo para assinaturas a vencer
-const expiringSubscriptions = [
-  {
-    id: 1,
-    client: "João Silva",
-    plan: "Premium Mensal",
-    expirationDate: "2025-04-22",
-    status: "today"
-  },
-  {
-    id: 2,
-    client: "Maria Oliveira",
-    plan: "Família Trimestral",
-    expirationDate: "2025-04-22",
-    status: "today"
-  },
-  {
-    id: 3,
-    client: "Carlos Santos",
-    plan: "Standard Mensal",
-    expirationDate: "2025-04-23",
-    status: "tomorrow"
-  },
-  {
-    id: 4,
-    client: "Ana Costa",
-    plan: "Premium Anual",
-    expirationDate: "2025-04-23",
-    status: "tomorrow"
-  },
-  {
-    id: 5,
-    client: "Pedro Ferreira",
-    plan: "Basic Mensal",
-    expirationDate: "2025-04-20",
-    status: "expired"
-  }
-];
+interface Subscription {
+  id: number;
+  client: string;
+  plan: string;
+  expirationDate: string;
+  status: 'today' | 'tomorrow' | 'expired';
+}
 
 const ExpiringSubscriptions = () => {
+  const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([]);
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "today":
@@ -70,25 +41,31 @@ const ExpiringSubscriptions = () => {
         </Link>
       </div>
       
-      <div className="space-y-3">
-        {expiringSubscriptions.map((subscription) => (
-          <div 
-            key={subscription.id}
-            className="flex items-center justify-between p-3 rounded-md bg-iptv-secondary border border-iptv-border"
-          >
-            <div>
-              <h4 className="font-medium">{subscription.client}</h4>
-              <p className="text-sm text-iptv-text-secondary">{subscription.plan}</p>
+      {subscriptions.length === 0 ? (
+        <div className="text-center py-8 text-iptv-text-secondary">
+          <p>Nenhuma assinatura a vencer no momento.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {subscriptions.map((subscription) => (
+            <div 
+              key={subscription.id}
+              className="flex items-center justify-between p-3 rounded-md bg-iptv-secondary border border-iptv-border"
+            >
+              <div>
+                <h4 className="font-medium">{subscription.client}</h4>
+                <p className="text-sm text-iptv-text-secondary">{subscription.plan}</p>
+              </div>
+              <div className="flex items-center">
+                {getStatusBadge(subscription.status)}
+                <Button variant="outline" size="sm" className="ml-3 bg-iptv-primary">
+                  Renovar
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center">
-              {getStatusBadge(subscription.status)}
-              <Button variant="outline" size="sm" className="ml-3 bg-iptv-primary">
-                Renovar
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
