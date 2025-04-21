@@ -54,14 +54,19 @@ interface Client {
 const Clients = () => {
   const { clients, addClient, updateClient, deleteClient } = useLocalClients();
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const { toast } = useToast();
   
-  const filteredClients = clients.filter(client => 
-    client.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.phone.includes(searchTerm)
-  );
+  const filteredClients = clients.filter(client => {
+    const matchesSearch = client.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.phone.includes(searchTerm);
+
+    const matchesStatus = !statusFilter || client.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const handleNewClient = (data: ClientFormValues) => {
     const newClient = {
@@ -137,10 +142,28 @@ const Clients = () => {
         </div>
         
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <Button variant="outline" className="flex items-center">
-            <Filter size={16} className="mr-2" />
-            Filtrar
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center">
+                <Filter size={16} className="mr-2" />
+                Filtrar
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+                Todos os status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('active')}>
+                Ativos
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('inactive')}>
+                Inativos
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('pending')}>
+                Pendentes
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <ClientFormModal onSubmit={handleNewClient} />
         </div>
