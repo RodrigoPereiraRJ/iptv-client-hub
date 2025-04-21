@@ -23,6 +23,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface Client {
@@ -44,6 +53,7 @@ interface Client {
 const Clients = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const { toast } = useToast();
   
   const filteredClients = clients.filter(client => 
@@ -107,12 +117,15 @@ const Clients = () => {
     }
   };
 
-  const handleDeleteClient = (id: number) => {
-    setClients(prev => prev.filter(client => client.id !== id));
-    toast({
-      title: "Cliente removido",
-      description: "O cliente foi removido com sucesso!"
-    });
+  const handleDeleteConfirm = () => {
+    if (clientToDelete) {
+      setClients(prev => prev.filter(client => client.id !== clientToDelete.id));
+      toast({
+        title: "Cliente removido",
+        description: "O cliente foi removido com sucesso!"
+      });
+      setClientToDelete(null);
+    }
   };
 
   return (
@@ -203,7 +216,7 @@ const Clients = () => {
                           <DropdownMenuSeparator className="bg-iptv-border" />
                           <DropdownMenuItem 
                             className="cursor-pointer text-iptv-danger flex items-center gap-2"
-                            onClick={() => handleDeleteClient(client.id)}
+                            onClick={() => setClientToDelete(client)}
                           >
                             <Trash2 size={16} />
                             Excluir
@@ -218,6 +231,28 @@ const Clients = () => {
           </div>
         </div>
       )}
+
+      <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você tem certeza que deseja excluir o cliente{" "}
+              <span className="font-semibold">
+                {clientToDelete ? `${clientToDelete.firstName} ${clientToDelete.lastName}` : ""}
+              </span>?
+              <br />
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setClientToDelete(null)}>Cancelar</AlertDialogCancel>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Excluir
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };
