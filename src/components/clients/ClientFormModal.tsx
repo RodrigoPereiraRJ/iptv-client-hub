@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus, Phone, User, MapPin, Flag, Server } from "lucide-react";
+import { Plus, Phone, User, MapPin, Flag, Server, Mail } from "lucide-react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -29,6 +28,7 @@ const formSchema = z.object({
     message: "Idade deve ser maior que 18 anos",
   }),
   phone: z.string().min(10, "Telefone inválido"),
+  email: z.string().email("E-mail inválido"),
   city: z.string().min(2, "Cidade é obrigatória"),
   state: z.string().min(2, "Estado é obrigatório"),
   country: z.string().min(2, "País é obrigatório"),
@@ -49,6 +49,7 @@ const ClientFormModal = ({ onSubmit }: ClientFormModalProps) => {
       lastName: "",
       age: "",
       phone: "",
+      email: "",
       city: "",
       state: "",
       country: "",
@@ -113,6 +114,28 @@ const ClientFormModal = ({ onSubmit }: ClientFormModalProps) => {
                     <FormLabel>Idade</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input 
+                          type="email" 
+                          className="pl-9" 
+                          placeholder="exemplo@email.com"
+                          {...field} 
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

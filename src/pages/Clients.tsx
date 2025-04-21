@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -70,11 +69,11 @@ const Clients = () => {
       lastName: data.lastName,
       age: Number(data.age),
       phone: data.phone,
+      email: data.email,  // Added email field
       city: data.city,
       state: data.state,
       country: data.country,
       server: data.server,
-      email: "",
       plan: "",
       status: "pending" as const,
       expirationDate: "",
