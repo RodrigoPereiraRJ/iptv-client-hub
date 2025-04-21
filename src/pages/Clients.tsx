@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Plus, Filter, MoreHorizontal } from "lucide-react";
+import { Search, Filter, MoreHorizontal } from "lucide-react";
+import ClientFormModal from "@/components/clients/ClientFormModal";
+import type { ClientFormValues } from "@/components/clients/ClientFormModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,13 +22,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
-// Tipo para os clientes
 interface Client {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
+  age: number;
   email: string;
   phone: string;
+  city: string;
+  state: string;
+  country: string;
+  server: string;
   plan: string;
   status: 'active' | 'inactive' | 'pending';
   expirationDate: string;
@@ -35,12 +43,30 @@ interface Client {
 const Clients = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
   
   const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.phone.includes(searchTerm)
   );
+
+  const handleNewClient = (data: ClientFormValues) => {
+    const newClient: Client = {
+      id: Date.now(),
+      ...data,
+      email: "", // These fields will be added later
+      plan: "",
+      status: "pending",
+      expirationDate: "",
+    };
+
+    setClients(prev => [...prev, newClient]);
+    toast({
+      title: "Cliente cadastrado",
+      description: "O novo cliente foi adicionado com sucesso!"
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -62,7 +88,7 @@ const Clients = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <Input
             type="text"
-            placeholder="Buscar por nome, e-mail ou telefone..."
+            placeholder="Buscar por nome ou telefone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -75,10 +101,7 @@ const Clients = () => {
             Filtrar
           </Button>
           
-          <Button className="bg-iptv-accent hover:bg-iptv-accent-hover flex-1 md:flex-auto">
-            <Plus size={16} className="mr-2" />
-            Novo Cliente
-          </Button>
+          <ClientFormModal onSubmit={handleNewClient} />
         </div>
       </div>
       
@@ -95,25 +118,35 @@ const Clients = () => {
                 <TableRow className="hover:bg-transparent border-iptv-border">
                   <TableHead className="text-iptv-text">Nome</TableHead>
                   <TableHead className="text-iptv-text">Contato</TableHead>
-                  <TableHead className="text-iptv-text">Plano</TableHead>
+                  <TableHead className="text-iptv-text">Localização</TableHead>
+                  <TableHead className="text-iptv-text">Servidor</TableHead>
                   <TableHead className="text-iptv-text">Status</TableHead>
-                  <TableHead className="text-iptv-text">Vencimento</TableHead>
                   <TableHead className="text-iptv-text w-[80px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClients.map((client) => (
                   <TableRow key={client.id} className="hover:bg-iptv-secondary border-iptv-border">
-                    <TableCell className="font-medium">{client.name}</TableCell>
                     <TableCell>
                       <div>
-                        <div>{client.email}</div>
-                        <div className="text-sm text-iptv-text-secondary">{client.phone}</div>
+                        <div className="font-medium">{`${client.firstName} ${client.lastName}`}</div>
+                        <div className="text-sm text-iptv-text-secondary">{client.age} anos</div>
                       </div>
                     </TableCell>
-                    <TableCell>{client.plan}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div>{client.phone}</div>
+                        {client.email && <div className="text-sm text-iptv-text-secondary">{client.email}</div>}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div>{`${client.city}, ${client.state}`}</div>
+                        <div className="text-sm text-iptv-text-secondary">{client.country}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{client.server}</TableCell>
                     <TableCell>{getStatusBadge(client.status)}</TableCell>
-                    <TableCell>{client.expirationDate}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
