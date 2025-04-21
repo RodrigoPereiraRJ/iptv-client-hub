@@ -54,7 +54,14 @@ const Clients = () => {
   const handleNewClient = (data: ClientFormValues) => {
     const newClient: Client = {
       id: Date.now(),
-      ...data,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      age: Number(data.age),
+      phone: data.phone,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      server: data.server,
       email: "", // These fields will be added later
       plan: "",
       status: "pending",

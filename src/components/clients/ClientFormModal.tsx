@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus, Phone, User, City, MapPin, Flag, Server } from "lucide-react";
+import { Plus, Phone, User, MapPin, Flag, Server } from "lucide-react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -144,7 +144,7 @@ const ClientFormModal = ({ onSubmit }: ClientFormModalProps) => {
                     <FormLabel>Cidade</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <City className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                         <Input className="pl-9" {...field} />
                       </div>
                     </FormControl>
