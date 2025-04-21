@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, MoreHorizontal } from "lucide-react";
 import ClientFormModal from "@/components/clients/ClientFormModal";
+import EditClientModal from "@/components/clients/EditClientModal";
 import type { ClientFormValues } from "@/components/clients/ClientFormModal";
+import type { EditClientFormValues } from "@/components/clients/EditClientModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,7 +64,7 @@ const Clients = () => {
       state: data.state,
       country: data.country,
       server: data.server,
-      email: "", // These fields will be added later
+      email: "",
       plan: "",
       status: "pending",
       expirationDate: "",
@@ -72,6 +74,24 @@ const Clients = () => {
     toast({
       title: "Cliente cadastrado",
       description: "O novo cliente foi adicionado com sucesso!"
+    });
+  };
+
+  const handleEditClient = (id: number, data: EditClientFormValues) => {
+    setClients(prev => prev.map(client => {
+      if (client.id === id) {
+        return {
+          ...client,
+          ...data,
+          age: Number(data.age),
+        };
+      }
+      return client;
+    }));
+    
+    toast({
+      title: "Cliente atualizado",
+      description: "Os dados do cliente foram atualizados com sucesso!"
     });
   };
 
@@ -162,7 +182,15 @@ const Clients = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-iptv-primary border-iptv-border">
-                          <DropdownMenuItem className="cursor-pointer">Editar</DropdownMenuItem>
+                          <EditClientModal
+                            client={client}
+                            onSubmit={(data) => handleEditClient(client.id, data)}
+                            trigger={
+                              <DropdownMenuItem className="cursor-pointer" onSelect={(e) => e.preventDefault()}>
+                                Editar
+                              </DropdownMenuItem>
+                            }
+                          />
                           <DropdownMenuItem className="cursor-pointer">Renovar</DropdownMenuItem>
                           <DropdownMenuItem className="cursor-pointer">Detalhes</DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-iptv-border" />
