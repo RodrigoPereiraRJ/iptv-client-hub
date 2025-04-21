@@ -16,36 +16,35 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
+  // Since we don't have any clients yet, we'll set everything to empty state
+  const isEmpty = true;
+  
   return (
     <Layout title="Dashboard">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard
           title="Total de Clientes"
-          value="248"
+          value="0"
           icon={<Users size={24} />}
-          change="+14%"
-          trend="up"
+          isEmpty={isEmpty}
         />
         <StatCard
           title="Planos Ativos"
-          value="174"
+          value="0"
           icon={<PackageIcon size={24} />}
-          change="+5%"
-          trend="up"
+          isEmpty={isEmpty}
         />
         <StatCard
           title="Receita Mensal"
-          value="R$ 12.450,00"
+          value="R$ 0,00"
           icon={<DollarSign size={24} />}
-          change="+10%"
-          trend="up"
+          isEmpty={isEmpty}
         />
         <StatCard
           title="Renovações Pendentes"
-          value="12"
+          value="0"
           icon={<AlertTriangle size={24} />}
-          change="-3"
-          trend="down"
+          isEmpty={isEmpty}
         />
       </div>
 
@@ -55,10 +54,10 @@ const Dashboard = () => {
         </div>
         <div>
           <ClientStatusCard
-            active={174}
-            inactive={45}
-            pending={29}
-            total={248}
+            active={0}
+            inactive={0}
+            pending={0}
+            total={0}
           />
         </div>
       </div>

@@ -9,22 +9,25 @@ interface StatCardProps {
   change?: string;
   trend?: "up" | "down" | "neutral";
   className?: string;
+  isEmpty?: boolean;
 }
 
-const StatCard = ({ title, value, icon, change, trend, className }: StatCardProps) => {
+const StatCard = ({ title, value, icon, change, trend, className, isEmpty }: StatCardProps) => {
   return (
     <div className={cn("grid-card", className)}>
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-iptv-text-secondary font-medium text-sm">{title}</h3>
-          <p className="text-2xl font-bold mt-1 animate-value">{value}</p>
+          <p className="text-2xl font-bold mt-1 animate-value">
+            {isEmpty ? "0" : value}
+          </p>
         </div>
         <div className="bg-iptv-secondary p-2 rounded-lg text-iptv-accent">
           {icon}
         </div>
       </div>
       
-      {change && (
+      {change && !isEmpty && (
         <div className="mt-4 flex items-center text-sm">
           <span
             className={cn(
